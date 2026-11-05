@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Department;
 use App\Models\Lecturer;
+use App\Models\Student;
 use Illuminate\Http\Request;
 
 class LecturerController extends Controller
@@ -12,7 +14,7 @@ class LecturerController extends Controller
      */
     public function index()
     {
-               return view ('lecturer.index', [
+        return view ('lecturer.index', [
             'title' => 'lecturer',
             'lecturers' => Lecturer::Latest()->get(),
         ]);
@@ -23,7 +25,10 @@ class LecturerController extends Controller
      */
     public function create()
     {
-        //
+        return view ('lecturer.create', [
+            'title' => 'Create lecturer',
+            'departments' => Department::Latest()->get(),
+        ]);
     }
 
     /**
@@ -31,7 +36,19 @@ class LecturerController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+        'name' => 'required',
+        'department_id' => 'required',
+    ],
+    [
+        'name.required' => 'Nama wajib di input',
+        'department_id.required' => 'Program Studi wajib di pilih',
+    ]
+    
+    );
+
+    Lecturer::create($validated);
+    return to_route('lecturer.index')->withSuccess('Data Berhasil Ditambahkan');
     }
 
     /**
@@ -47,7 +64,11 @@ class LecturerController extends Controller
      */
     public function edit(Lecturer $lecturer)
     {
-        //
+        return view ('lecturer.edit', [
+            'title' => 'Edit lecturer',
+            'departments' => Department::Latest()->get(),
+            'lecturer' => $lecturer,
+        ]);
     }
 
     /**
@@ -55,7 +76,19 @@ class LecturerController extends Controller
      */
     public function update(Request $request, Lecturer $lecturer)
     {
-        //
+            $validated = $request->validate([
+        'name' => 'required',
+        'department_id' => 'required',
+    ],
+    [
+        'name.required' => 'Nama wajib di input',
+        'department_id.required' => 'Program Studi wajib di ubah',
+    ]
+    
+    );
+
+    $lecturer->update($validated);
+    return to_route('lecturer.index')->withSuccess('Data Berhasil Diubah');
     }
 
     /**

@@ -37,15 +37,18 @@ class DepartmentController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Departmen $departmen)
+    public function show(Department $department)
     {
-        //
+        return view ('department.show', [
+            'title' => 'Detail Department ' . $department->name,
+            'department' => $department,
+        ]);
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Departmen $departmen)
+    public function edit(Department $departmen)
     {
         //
     }

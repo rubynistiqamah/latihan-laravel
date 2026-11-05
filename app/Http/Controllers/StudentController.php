@@ -31,7 +31,7 @@ class StudentController extends Controller
      */
     public function store(Request $request)
     {
-         $validated = $request->validate([
+        $validated = $request->validate([
         'name' => 'required',
         'nim' => 'required|numeric|digits:11',
     ],
@@ -43,10 +43,10 @@ class StudentController extends Controller
     ]
     
     );
- 
+
     Student::create($validated);
     return to_route('student.index')->withSuccess('Data Berhasil Ditambahkan');
- 
+
     }
 
     /**
