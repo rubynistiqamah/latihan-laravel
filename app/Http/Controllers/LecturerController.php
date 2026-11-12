@@ -6,6 +6,7 @@ use App\Models\Department;
 use App\Models\Lecturer;
 use App\Models\Student;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class LecturerController extends Controller
 {
@@ -39,13 +40,21 @@ class LecturerController extends Controller
         $validated = $request->validate([
         'name' => 'required',
         'department_id' => 'required',
+        'avatar' => 'nullable|image|mimes:jpg,png,jpeg,webp|max:1024'
     ],
     [
         'name.required' => 'Nama wajib di input',
         'department_id.required' => 'Program Studi wajib di pilih',
+        'avatar.image' =>'Avatar harus berupa gambar',
+        'avatar.mimes' =>'Format avatar adalah jpg,png, jpeg, webp',
+        'avatar.max' =>'Ukuran avatar maksimum 1Mb',
     ]
     
     );
+
+    if($request->hasFile('avatar')) {
+        $validated['avatar'] = $request->file('avatar')->store('lecturers', 'public');
+    }
 
     Lecturer::create($validated);
     return to_route('lecturer.index')->withSuccess('Data Berhasil Ditambahkan');
@@ -76,16 +85,32 @@ class LecturerController extends Controller
      */
     public function update(Request $request, Lecturer $lecturer)
     {
-            $validated = $request->validate([
+    $validated = $request->validate([
         'name' => 'required',
         'department_id' => 'required',
+        'avatar' => 'nullable|image|mimes:jpg,png,jpeg,webp|max:1024'
     ],
     [
         'name.required' => 'Nama wajib di input',
-        'department_id.required' => 'Program Studi wajib di ubah',
+        'department_id.required' => 'Program Studi wajib di pilih',
+        'avatar.image' =>'Avatar harus berupa gambar',
+        'avatar.mimes' =>'Format avatar adalah jpg,png, jpeg, webp',
+        'avatar.max' =>'Ukuran avatar maksimum 1Mb',
     ]
     
     );
+
+    if($request->hasFile('avatar')) {
+
+        if($lecturer->avatar) {
+            Storage::disk('public')->delete($lecturer->avatar);
+        }
+
+
+
+
+        $validated['avatar'] = $request->file('avatar')->store('lecturers', 'public');
+    };
 
     $lecturer->update($validated);
     return to_route('lecturer.index')->withSuccess('Data Berhasil Diubah');
